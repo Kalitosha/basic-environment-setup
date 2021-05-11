@@ -1,26 +1,67 @@
 const path = require('path');
-const toCss = require('mini-css-extract-plugin');
-const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin');
-const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
+const miniCssExtractPlugin = require('mini-css-extract-plugin');
 
 module.exports = {
   entry: {
-    "bundle": "./src/app.js",
-    "bundle.min": "./src/app.js",
+    main: "./src/index.js"
   },
   output: {
     path: path.resolve(__dirname, 'dist'),
     publicPath: '/dist',
-    filename: "js/main.min.js"
+    filename: "js/[name].min.js"
   },
   module: {
     rules: [
       {
+        test: /\.(woff(2)?|ttf|eot|svg)(\?v=\d+\.\d+\.\d+)?$/,
+        loader: 'file-loader',
+        options: {
+          name: '[name].[ext]'
+        }
+      },
+      {
+        test: /\.(png|jpg|gif|svg)$/,
+        loader: 'file-loader',
+        options: {
+          name: '[name].[ext]'
+        }
+      },
+      {
+        test: /\.css$/,
+        use: [
+          /*'style-loader',*/
+          miniCssExtractPlugin.loader,
+          {
+            loader: 'css-loader',
+            options: { sourceMap: true }
+          },
+          {
+            loader: 'postcss-loader',
+            options: {
+              sourceMap: true
+            }
+          }
+        ]
+      },
+      {
         test: /\.s[ac]ss$/,
         use: [
-          toCss.loader,
-          'css-loader?url=false',
-          'sass-loader',
+          /*'style-loader',*/
+          miniCssExtractPlugin.loader,
+          {
+            loader: 'css-loader',
+            options: { sourceMap: true }
+          },
+          {
+            loader: 'postcss-loader',
+            options: {
+              sourceMap: true
+            }
+          },
+          {
+            loader: 'sass-loader',
+            options: { sourceMap: true }
+          }
         ]
       },
       {
@@ -28,21 +69,12 @@ module.exports = {
         loader: 'babel-loader',
         exclude: '/node_modules/'
       }
-
     ]
   },
-  optimization: {
-    minimizer: [
-      new OptimizeCssAssetsPlugin({}),
-      new UglifyJsPlugin({
-        include: /\.min\.js$/
-      })
-    ],
-  },
   plugins: [
-    new toCss({
-      filename: 'css/style.css'
-    }),
+    new miniCssExtractPlugin({
+      filename: 'css/[name].min.css'
+    })
   ],
   devServer: {
     overlay: true,
