@@ -37,9 +37,7 @@ module.exports = {
           },
           {
             loader: 'postcss-loader',
-            options: {
-              sourceMap: true
-            }
+            options: { sourceMap: true }
           }
         ]
       },
@@ -54,9 +52,7 @@ module.exports = {
           },
           {
             loader: 'postcss-loader',
-            options: {
-              sourceMap: true
-            }
+            options: { sourceMap: true }
           },
           {
             loader: 'sass-loader',
